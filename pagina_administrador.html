@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1em;
+            font-size: 1.5em;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 1em;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1em;
+        }
+
+        label {
+            margin-bottom: 0.5em;
+            display: block;
+        }
+
+        input[type="text"],
+        select {
+            margin-bottom: 1em;
+            padding: 0.5em;
+            width: 300px;
+        }
+
+        button {
+            padding: 0.5em 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 0.5em;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .selected {
+            background-color: #f0f0f0;
+        }
+
+        footer {
+            background-color: #f0f0f0;
+            padding: 1em;
+            text-align: center;
+            font-size: 0.8em;
+            margin-top: 2em;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        Control de Acceso - Administrador
+    </header>
+    <section>
+        <p>Bienvenido, aquí puedes acceder a las funciones y configuraciones del sistema de control de acceso.</p>
+        <form id="registroForm" method="GET" action="guardar_datos.php">
+            <div>
+		<label for="noCuentaInput">Número de cuenta:</label>
+            <input type="text" id="noCuentaInput" required pattern="[0-9]{7}" placeholder="1234567">
+		
+		</div>
+
+            <label for="nombresInput">Nombres:</label>
+            <input type="text" id="nombresInput" required pattern="[A-Za-záéíóúüñÁÉÍÓÚÜÑ]{1,65}" placeholder="Juan">
+
+            <label for="apellidoPaternoInput">Apellido Paterno:</label>
+            <input type="text" id="apellidoPaternoInput" required pattern="[A-Za-záéíóúüñÁÉÍÓÚÜÑ]{1,65}" placeholder="Pérez">
+
+            <label for="apellidoMaternoInput">Apellido Materno:</label>
+            <input type="text" id="apellidoMaternoInput" required pattern="[A-Za-záéíóúüñÁÉÍÓÚÜÑ]{1,65}" placeholder="Gómez">
+
+            <label for="generoSelect">Género:</label>
+            <select id="generoSelect">
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="NB">No binario</option>
+                <option value="ND">Prefiero no decir</option>
+            </select>
+
+            <label for="tipoUsuarioSelect">Tipo de usuario:</label>
+            <select id="tipoUsuarioSelect">
+                <option value="Administrativo">Administrativo</option>
+                <option value="Alumno">Alumno</option>
+                <option value="Docente">Docente</option>
+            </select>
+
+            <label for="idTarjetaInput">ID Tarjeta:</label>
+            <input type="text" id="idTarjetaInput" required pattern="[A-Za-z0-9]{1,20}" placeholder="A9B8C7D6E5F4G3H2">
+
+            <label for="idHuellaInput">ID Huella:</label>
+            <input type="text" id="idHuellaInput" required pattern="[A-Za-z0-9]{1,20}" placeholder="5A6B7C8D9E0F1G2">
+
+            <button type="submit">Registrar</button>
+        </form>
+
+        <table id="registrosTable">
+            <thead>
+                <tr>
+                    <th>Número de cuenta</th>
+                    <th>Nombres</th>
+                    <th>Apellido Paterno</th>
+                    <th>Apellido Materno</th>
+                    <th>Género</th>
+                    <th>Tipo de usuario</th>
+                    <th>ID Tarjeta</th>
+                    <th>ID Huella</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se agregarán los registros dinámicamente -->
+            </tbody>
+        </table>
+
+        <div>
+            
+        </div>
+    </section>
+    <footer>
+        Autor: WebDesigners | Teléfono: 7223486261 | Email: imartineza005@alumno.uaemex.mx | Versión: 1.0
+    </footer>
+
+    <script>
+        var registros = [];
+
+        function agregarRegistroTabla(registro) {
+            var tableBody = document.querySelector("#registrosTable tbody");
+            var row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${registro.noCuenta}</td>
+                <td>${registro.nombres}</td>
+                <td>${registro.apellidoPaterno}</td>
+                <td>${registro.apellidoMaterno}</td>
+                <td>${registro.genero}</td>
+                <td>${registro.tipoUsuario}</td>
+                <td>${registro.idTarjeta}</td>
+                <td>${registro.idHuella}</td>
+                <td>
+                    <button class="eliminarButton">Eliminar</button>
+                    <button class="modificarButton">Modificar</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+        }
+
+        function limpiarFormulario() {
+            var noCuentaInput = document.querySelector("#noCuentaInput");
+            var nombresInput = document.querySelector("#nombresInput");
+            var apellidoPaternoInput = document.querySelector("#apellidoPaternoInput");
+            var apellidoMaternoInput = document.querySelector("#apellidoMaternoInput");
+            var generoSelect = document.querySelector("#generoSelect");
+            var tipoUsuarioSelect = document.querySelector("#tipoUsuarioSelect");
+            var idTarjetaInput = document.querySelector("#idTarjetaInput");
+            var idHuellaInput = document.querySelector("#idHuellaInput");
+
+            noCuentaInput.value = "";
+            nombresInput.value = "";
+            apellidoPaternoInput.value = "";
+            apellidoMaternoInput.value = "";
+            generoSelect.value = "Masculino";
+            tipoUsuarioSelect.value = "Administrativo";
+            idTarjetaInput.value = "";
+            idHuellaInput.value = "";
+        }
+
+        var registroForm = document.querySelector("#registroForm");
+        registroForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var noCuentaInput = document.querySelector("#noCuentaInput");
+            var nombresInput = document.querySelector("#nombresInput");
+            var apellidoPaternoInput = document.querySelector("#apellidoPaternoInput");
+            var apellidoMaternoInput = document.querySelector("#apellidoMaternoInput");
+            var generoSelect = document.querySelector("#generoSelect");
+            var tipoUsuarioSelect = document.querySelector("#tipoUsuarioSelect");
+            var idTarjetaInput = document.querySelector("#idTarjetaInput");
+            var idHuellaInput = document.querySelector("#idHuellaInput");
+
+            var registro = {
+                noCuenta: noCuentaInput.value,
+                nombres: nombresInput.value,
+                apellidoPaterno: apellidoPaternoInput.value,
+                apellidoMaterno: apellidoMaternoInput.value,
+                genero: generoSelect.value,
+                tipoUsuario: tipoUsuarioSelect.value,
+                idTarjeta: idTarjetaInput.value,
+                idHuella: idHuellaInput.value
+            };
+
+            // Verificar si ya existe un registro con el mismo número de cuenta
+            var duplicado = registros.some(function (reg) {
+                return reg.noCuenta === registro.noCuenta;
+            });
+
+            if (duplicado) {
+                alert("Ya existe un registro con el mismo número de cuenta. Por favor, verifica los datos.");
+            } else {
+                registros.push(registro);
+                agregarRegistroTabla(registro);
+                limpiarFormulario();
+            }
+        });
+
+        var eliminarButton = document.querySelector("#eliminarButton");
+        eliminarButton.addEventListener("click", function () {
+            var selectedRows = document.querySelectorAll("#registrosTable tbody tr.selected");
+            selectedRows.forEach(function (row) {
+                row.remove();
+            });
+        });
+
+        var registrosTable = document.querySelector("#registrosTable");
+        registrosTable.addEventListener("click", function (event) {
+            var target = event.target;
+            var row = target.parentNode.parentNode;
+
+            if (target.classList.contains("eliminarButton")) {
+                row.remove();
+            } else if (target.classList.contains("modificarButton")) {
+                var cells = row.querySelectorAll("td");
+
+                var noCuentaInput = document.querySelector("#noCuentaInput");
+                var nombresInput = document.querySelector("#nombresInput");
+                var apellidoPaternoInput = document.querySelector("#apellidoPaternoInput");
+                var apellidoMaternoInput = document.querySelector("#apellidoMaternoInput");
+                var generoSelect = document.querySelector("#generoSelect");
+                var tipoUsuarioSelect = document.querySelector("#tipoUsuarioSelect");
+                var idTarjetaInput = document.querySelector("#idTarjetaInput");
+                var idHuellaInput = document.querySelector("#idHuellaInput");
+
+                noCuentaInput.value = cells[0].textContent;
+                nombresInput.value = cells[1].textContent;
+                apellidoPaternoInput.value = cells[2].textContent;
+                apellidoMaternoInput.value = cells[3].textContent;
+                generoSelect.value = cells[4].textContent;
+                tipoUsuarioSelect.value = cells[5].textContent;
+                idTarjetaInput.value = cells[6].textContent;
+                idHuellaInput.value = cells[7].textContent;
+
+                row.classList.add("selected");
+            }
+        });
+    </script>
+</body>
+
+</html>
